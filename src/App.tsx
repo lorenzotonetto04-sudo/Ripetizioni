@@ -1,5 +1,11 @@
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth'
 import Login from './Login'
+import AppShell from './layout/AppShell'
+import AdminDashboard from './pages/AdminDashboard'
+import StudentDashboard from './pages/StudentDashboard'
+import Placeholder from './pages/Placeholder'
+import { adminNav, studentNav } from './nav'
 
 function Screen() {
   const { loading, session, profile, profileError, signOut } = useAuth()
@@ -26,20 +32,23 @@ function Screen() {
     )
   }
 
-  // Schermata provvisoria: le dashboard vere arrivano nella Fase 4
+  const isAdmin = profile.role === 'admin'
+  const items = isAdmin ? adminNav : studentNav
+
   return (
-    <main className="center-screen">
-      <div className="card">
-        <h1>Benvenuto{profile.full_name ? ', ' + profile.full_name : ''}</h1>
-        <p>
-          {profile.role === 'admin'
-            ? 'Hai effettuato l’accesso come amministratore.'
-            : 'Hai effettuato l’accesso come studente.'}
-        </p>
-        <p className="muted">Fase 3 completata. Prossimo passo: le dashboard.</p>
-        <button className="btn secondary" onClick={signOut}>Esci</button>
-      </div>
-    </main>
+    <HashRouter>
+      <Routes>
+        <Route element={<AppShell items={items} />}>
+          <Route index element={isAdmin ? <AdminDashboard /> : <StudentDashboard />} />
+          {items
+            .filter((i) => i.to !== '/')
+            .map((i) => (
+              <Route key={i.to} path={i.to} element={<Placeholder title={i.label} />} />
+            ))}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </HashRouter>
   )
 }
 
