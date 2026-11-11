@@ -2,7 +2,7 @@ import { supabase } from './supabase'
 
 // Chiama la funzione sicura "admin-students" (solo amministratore)
 export async function callAdminFunction(body: Record<string, unknown>) {
-  const { data, error } = await supabase.functions.invoke('admin-students', { body })
+  const { data, error } = await supabase.functions.invoke('super-worker', { body })
   if (error) {
     let message = error.message
     try {
