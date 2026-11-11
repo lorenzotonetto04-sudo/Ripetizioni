@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import StudentForm from '../components/StudentForm'
+import StudentLessonsTab from '../components/StudentLessonsTab'
 import type { StudentValues } from '../components/StudentForm'
 import { callAdminFunction, generatePassword, logActivity, parseSubjects } from '../lib/adminApi'
 
@@ -21,6 +22,8 @@ type Student = {
 
 export default function StudentDetail() {
   const { id } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = searchParams.get('sezione') === 'lezioni' ? 'lezioni' : 'scheda'
   const [student, setStudent] = useState<Student | null>(null)
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(true)
@@ -171,6 +174,21 @@ export default function StudentDetail() {
         {!student.active && <span className="badge">Archiviato</span>}
       </div>
 
+      <div className="tabs" role="tablist">
+        <button className={tab === 'scheda' ? 'on' : ''} onClick={() => setSearchParams({})}>
+          Scheda
+        </button>
+        <button
+          className={tab === 'lezioni' ? 'on' : ''}
+          onClick={() => setSearchParams({ sezione: 'lezioni' })}
+        >
+          Lezioni
+        </button>
+      </div>
+
+      {tab === 'lezioni' && <StudentLessonsTab studentId={student.id} />}
+
+      {tab === 'scheda' && (
       <div className="stack">
         <section className="panel">
           <h2>Scheda</h2>
@@ -235,6 +253,7 @@ export default function StudentDetail() {
           </button>
         </section>
       </div>
+      )}
     </>
   )
 }

@@ -7,11 +7,14 @@ import StudentDashboard from './pages/StudentDashboard'
 import Students from './pages/Students'
 import StudentNew from './pages/StudentNew'
 import StudentDetail from './pages/StudentDetail'
+import AdminLessons from './pages/AdminLessons'
+import LessonEditor from './pages/LessonEditor'
+import StudentLessonsPage from './pages/StudentLessonsPage'
 import Placeholder from './pages/Placeholder'
 import { adminNav, studentNav } from './nav'
 
 // Sezioni già realizzate (le altre mostrano ancora il segnaposto)
-const BUILT = ['/', '/studenti']
+const BUILT = ['/', '/studenti', '/lezioni']
 
 function Screen() {
   const { loading, session, profile, profileError, signOut } = useAuth()
@@ -51,8 +54,12 @@ function Screen() {
               <Route path="/studenti" element={<Students />} />
               <Route path="/studenti/nuovo" element={<StudentNew />} />
               <Route path="/studenti/:id" element={<StudentDetail />} />
+              <Route path="/lezioni" element={<AdminLessons />} />
+              <Route path="/lezioni/nuova" element={<LessonEditor mode="create" />} />
+              <Route path="/lezioni/:id" element={<LessonEditor mode="edit" />} />
             </>
           )}
+          {!isAdmin && <Route path="/lezioni" element={<StudentLessonsPage />} />}
           {items
             .filter((i) => !BUILT.includes(i.to))
             .map((i) => (
