@@ -4,8 +4,14 @@ import Login from './Login'
 import AppShell from './layout/AppShell'
 import AdminDashboard from './pages/AdminDashboard'
 import StudentDashboard from './pages/StudentDashboard'
+import Students from './pages/Students'
+import StudentNew from './pages/StudentNew'
+import StudentDetail from './pages/StudentDetail'
 import Placeholder from './pages/Placeholder'
 import { adminNav, studentNav } from './nav'
+
+// Sezioni già realizzate (le altre mostrano ancora il segnaposto)
+const BUILT = ['/', '/studenti']
 
 function Screen() {
   const { loading, session, profile, profileError, signOut } = useAuth()
@@ -40,8 +46,15 @@ function Screen() {
       <Routes>
         <Route element={<AppShell items={items} />}>
           <Route index element={isAdmin ? <AdminDashboard /> : <StudentDashboard />} />
+          {isAdmin && (
+            <>
+              <Route path="/studenti" element={<Students />} />
+              <Route path="/studenti/nuovo" element={<StudentNew />} />
+              <Route path="/studenti/:id" element={<StudentDetail />} />
+            </>
+          )}
           {items
-            .filter((i) => i.to !== '/')
+            .filter((i) => !BUILT.includes(i.to))
             .map((i) => (
               <Route key={i.to} path={i.to} element={<Placeholder title={i.label} />} />
             ))}
